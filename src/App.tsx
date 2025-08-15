@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as tmi from "tmi.js";
 import { useGetWordList } from "./useGetWordList.tsx";
+import { PlayerType } from "./PlayerType.ts";
 
 function App() {
   const initialized = useRef<boolean>(false);
@@ -12,6 +13,7 @@ function App() {
   const INITIAL_CLUES = urlParams.get("initialclues");
   const RESTART_SPEED = urlParams.get("restartspeed");
   const DELAY = urlParams.get("delay");
+  const SHOWLBINDEX = urlParams.get("showlbindex");
 
   const word = useRef<string>();
   const wordList = useRef<string[] | null>(null);
@@ -24,9 +26,14 @@ function App() {
 
   const [wordListInitialized, setWordListInitialized] = useState<boolean>(false);
 
+  const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
+  const leaderboard = useRef<PlayerType[]>([]);
+  const gameIndex = useRef<number>(0);
+
   const clueSpeed = SPEED ? Number(SPEED) * 1000 : 15000;
   const clueDelay = DELAY ? Number(DELAY) * 1000 : 0;
   const restartSpeed = RESTART_SPEED ? Number(RESTART_SPEED) * 1000 : 5000;
+  const showLeaderboardIndex = SHOWLBINDEX ? Number(SHOWLBINDEX) : 1;
 
   const fetchedWordList = useGetWordList();
 
@@ -64,15 +71,22 @@ function App() {
 
       if (message.toLowerCase() === word.current!.toLowerCase()) {
         isGameOver.current = true;
+        gameIndex.current = gameIndex.current + 1;
         setDisplayWord(word.current!.split(""));
 
         if (intervalIdRef.current !== null) clearInterval(intervalIdRef.current);
 
         setWinner(tags.username);
+        updateLeaderboard(tags.username);
 
         const timer = window.setInterval(() => {
+          if (gameIndex.current >= showLeaderboardIndex) {
+            showLeaderboardUI();
+          } else {
+            initializeGame();
+          }
+
           clearInterval(timer);
-          initializeGame();
         }, restartSpeed);
       }
     });
@@ -110,11 +124,58 @@ function App() {
     setWinner("");
   };
 
+  const updateLeaderboard = (winnerName: string) => {
+    const lb = leaderboard.current;
+    const i = lb.findIndex((p) => p.Username === winnerName);
+
+    if (i !== -1) {
+      lb[i] = { ...lb[i], Score: lb[i].Score + 1 };
+    } else {
+      lb.push({ Username: winnerName, Score: 1 });
+    }
+
+    lb.sort((a, b) => b.Score - a.Score);
+  };
+
+  const showLeaderboardUI = () => {
+    setShowLeaderboard(true);
+    gameIndex.current = 0;
+
+    const timer = window.setInterval(() => {
+      clearInterval(timer);
+
+      setShowLeaderboard(false);
+      initializeGame();
+    }, 4000);
+  };
+
   return (
     <div className="game-container">
-      <h2>Guess the word!</h2>
-      <h3>{displayWord.join(" ")}</h3>
-      {isGameOver.current ? <h3 className="congrats">🎉 {winner} guessed correctly! 🎉</h3> : <h3></h3>}
+      {!showLeaderboard ? (
+        <div>
+          <h2>Guess the word!</h2>
+          <h3>{displayWord.join(" ")}</h3>
+          {isGameOver.current ? <h3 className="winner">🎉 {winner} guessed correctly! 🎉</h3> : <h3></h3>}
+        </div>
+      ) : (
+        <div>
+          <h2>Leaderboard</h2>
+          {leaderboard.current.length === 0 ? (
+            <h3>No winners</h3>
+          ) : (
+            <ol>
+              {leaderboard.current.slice(0, 3).map((p, i) => {
+                const placeClass = ["winner", "secondplace", "thirdplace"][i] ?? "";
+                return (
+                  <li key={p.Username} className={placeClass}>
+                    {p.Username} - {p.Score}
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+        </div>
+      )}
     </div>
   );
 }
