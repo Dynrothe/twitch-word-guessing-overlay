@@ -14,6 +14,9 @@ function App() {
   const RESTART_SPEED = urlParams.get("restartspeed");
   const DELAY = urlParams.get("delay");
   const SHOWLBINDEX = urlParams.get("showlbindex");
+  const SAVE_LEADERBOARD = urlParams.get("saveleaderboard");
+  const WIPE_LEADERBOARD = urlParams.get("wipeleaderboard");
+  const SHOW_LEADERBOARD = urlParams.get("showleaderboard");
 
   const word = useRef<string>();
   const wordList = useRef<string[] | null>(null);
@@ -34,6 +37,9 @@ function App() {
   const clueDelay = DELAY ? Number(DELAY) * 1000 : 0;
   const restartSpeed = RESTART_SPEED ? Number(RESTART_SPEED) * 1000 : 5000;
   const showLeaderboardIndex = SHOWLBINDEX ? Number(SHOWLBINDEX) : 1;
+  const saveLeaderboard = String(SAVE_LEADERBOARD).toLowerCase() === "true";
+  const wipeLeaderboard = String(WIPE_LEADERBOARD).toLowerCase() === "true";
+  const forceShowLeaderboard = String(SHOW_LEADERBOARD).toLowerCase() === "true";
 
   const fetchedWordList = useGetWordList();
 
@@ -51,6 +57,14 @@ function App() {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
+
+    const savedLeaderboard = localStorage.getItem("wg_leaderboard");
+    if (wipeLeaderboard) localStorage.removeItem("wg_leaderboard");
+
+    if (savedLeaderboard && saveLeaderboard && !wipeLeaderboard) {
+      const savedPlayers: PlayerType[] = JSON.parse(savedLeaderboard) as PlayerType[];
+      if (savedPlayers.length > 0) leaderboard.current = savedPlayers;
+    }
 
     const twitchChannel: string = TWITCH_CHANNEL.toLowerCase();
     const twitchClient = tmi.Client({ channels: [twitchChannel] });
@@ -135,6 +149,8 @@ function App() {
     }
 
     lb.sort((a, b) => b.Score - a.Score);
+
+    localStorage.setItem("wg_leaderboard", JSON.stringify(leaderboard.current));
   };
 
   const showLeaderboardUI = () => {
@@ -151,7 +167,7 @@ function App() {
 
   return (
     <div className="game-container">
-      {!showLeaderboard ? (
+      {!showLeaderboard && !forceShowLeaderboard ? (
         <div>
           <h2>Guess the word!</h2>
           <h3>{displayWord.join(" ")}</h3>
