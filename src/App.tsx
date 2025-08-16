@@ -179,7 +179,7 @@ function App() {
           {leaderboard.current.length === 0 ? (
             <h3>No winners</h3>
           ) : (
-            <ol>
+            <ol style={{ justifyContent: "center", display: "flex" }}>
               {leaderboard.current.slice(0, 3).map((p, i) => {
                 const placeClass = ["winner", "secondplace", "thirdplace"][i] ?? "";
                 return (
