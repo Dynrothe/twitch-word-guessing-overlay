@@ -111,6 +111,11 @@ function App() {
     setWordListInitialized(true);
     wordList.current = fetchedWordList;
 
+    updateLeaderboard("Dynny");
+    updateLeaderboard("Chippy");
+    updateLeaderboard("Potato");
+    updateLeaderboard("Ben");
+
     initializeGame();
   }, [fetchedWordList]);
 
@@ -174,12 +179,12 @@ function App() {
           {isGameOver.current ? <h3 className="winner">🎉 {winner} guessed correctly! 🎉</h3> : <h3></h3>}
         </div>
       ) : (
-        <div>
+        <div style={{ alignItems: "center" }}>
           <h2>Leaderboard</h2>
           {leaderboard.current.length === 0 ? (
             <h3>No winners</h3>
           ) : (
-            <ol style={{ justifyContent: "center", display: "flex" }}>
+            <ol style={{ justifyContent: "center", display: "grid" }}>
               {leaderboard.current.slice(0, 3).map((p, i) => {
                 const placeClass = ["winner", "secondplace", "thirdplace"][i] ?? "";
                 return (
