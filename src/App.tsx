@@ -85,6 +85,7 @@ function App() {
 
     if (savedLeaderboard && saveLeaderboard && !wipeLeaderboard) {
       const savedPlayers: PlayerType[] = JSON.parse(savedLeaderboard) as PlayerType[];
+      console.log(savedPlayers);
       if (savedPlayers.length > 0) config.current.Leaderboard = savedPlayers;
     }
 
@@ -164,7 +165,13 @@ function App() {
         <div style={{ alignItems: "center" }}>
           <h2>Leaderboard</h2>
           {config.current.Leaderboard.length === 0 ? (
-            <h3>No winners</h3>
+            <>
+              {config.current.ForceShowLeaderboard && String(SAVE_LEADERBOARD).toLowerCase() === "false" ? (
+                <h3>Persistent leaderboard required to show saved leaderboard.</h3>
+              ) : (
+                <h3>No winners</h3>
+              )}
+            </>
           ) : (
             <ol style={{ justifyContent: "center", display: "grid" }}>
               {config.current.Leaderboard.slice(0, 3).map((p, i) => {
