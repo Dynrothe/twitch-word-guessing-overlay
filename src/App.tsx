@@ -111,11 +111,6 @@ function App() {
     setWordListInitialized(true);
     wordList.current = fetchedWordList;
 
-    updateLeaderboard("Dynny");
-    updateLeaderboard("Chippy");
-    updateLeaderboard("Potato");
-    updateLeaderboard("Ben");
-
     initializeGame();
   }, [fetchedWordList]);
 
