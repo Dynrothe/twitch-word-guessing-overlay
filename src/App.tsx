@@ -85,7 +85,6 @@ function App() {
 
     if (savedLeaderboard && saveLeaderboard && !wipeLeaderboard) {
       const savedPlayers: PlayerType[] = JSON.parse(savedLeaderboard) as PlayerType[];
-      console.log(savedPlayers);
       if (savedPlayers.length > 0) config.current.Leaderboard = savedPlayers;
     }
 

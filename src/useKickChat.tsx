@@ -45,8 +45,12 @@ export default function useKickChat(config: any, wordList: string[] | undefined)
           if (parsed && !parsed.event.includes("ChatMessageEvent")) return;
 
           const messageData = JSON.parse(parsed.data);
-          const message = messageData.content;
           const sender = messageData.sender.username;
+          let message = messageData.content;
+
+          if (/[\uDB40\uDC00-\uDC7F]/.test(message)) {
+            message = message.replace(/\uDB40[\uDC00-\uDC7F]/g, "").trimEnd();
+          }
 
           if (message.toLowerCase() === _config.Word!.toLowerCase()) {
             _config.IsGameOver = true;
