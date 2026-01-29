@@ -118,7 +118,7 @@ export const useGetWordList = () => {
 
       if (!WORD_LIST_URL) return setWordList(defaultWords);
 
-      const REQUEST = await fetch("https://corsproxy.io/?url=" + WORD_LIST_URL);
+      const REQUEST = await fetch("https://api.allorigins.win/raw?url=" + WORD_LIST_URL);
       const wordListText = await REQUEST.text();
 
       setWordList(wordListText.split(","));

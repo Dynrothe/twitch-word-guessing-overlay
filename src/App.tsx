@@ -113,7 +113,7 @@ function App() {
       _config.RevealCount += 1;
 
       setDisplayWord((prev) =>
-        _config.Word!.split("").map((letter, index) => (index < _config.RevealCount ? letter : prev[index] || "_"))
+        _config.Word!.split("").map((letter, index) => (index < _config.RevealCount ? letter : prev[index] || "_")),
       );
     }, _config.ClueSpeed + _config.ClueDelay);
 
