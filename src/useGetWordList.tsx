@@ -108,22 +108,35 @@ export const useGetWordList = () => {
 
   const WORD_LIST = urlParams.get("wordlist") ? decodeURIComponent(urlParams.get("wordlist")!) : null;
   const WORD_LIST_URL = urlParams.get("wordlisturl") ? decodeURIComponent(urlParams.get("wordlisturl")!) : null;
+
   const [wordList, setWordList] = useState<string[]>();
+  const [initialized, setInitialized] = useState<boolean>(false);
+  const [refetch, setRefetch] = useState<number>(0);
 
   useEffect(() => {
     (async () => {
+      if (initialized) return;
+
       if (!WORD_LIST && !WORD_LIST_URL) setWordList(defaultWords);
-
       if (WORD_LIST) return setWordList(WORD_LIST.split(","));
-
       if (!WORD_LIST_URL) return setWordList(defaultWords);
 
       const REQUEST = await fetch("https://jere.io/proxy/api/fetch?url=" + WORD_LIST_URL);
       const wordListText = await REQUEST.text();
 
+      if (wordListText === "{}") {
+        setTimeout(() => {
+          console.log("Refetching word guesser list...");
+          setRefetch((old) => old + 1);
+        }, 3000);
+
+        return;
+      }
+
+      setInitialized(true);
       setWordList(wordListText.split(","));
     })();
-  }, []);
+  }, [refetch]);
 
   return wordList;
 };

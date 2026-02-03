@@ -152,6 +152,17 @@ function App() {
     }, 4000);
   };
 
+  if (config.current.WordList.length === 0) {
+    return (
+      <div className="game-container">
+        <div>
+          <h2>Guess the word!</h2>
+          <h3>Loading word list...</h3>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="game-container">
       {!showLeaderboard && !config.current.ForceShowLeaderboard ? (
