@@ -5,8 +5,50 @@ import { GameConfig } from "./GameConfig.ts";
 import { PlayerType } from "./PlayerType.ts";
 import useKickChat from "./useKickChat.tsx";
 
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function isValidHex(hex: string): boolean {
+  return /^[0-9a-fA-F]{6}$/.test(hex);
+}
+
+function applyColorParams(urlParams: URLSearchParams) {
+  const defaults = {
+    titlecolor: "9147ff",
+    bgcolor: "18181b",
+    textcolor: "ffffff",
+    firstcolor: "ffdd57",
+    secondcolor: "d7d7d7",
+    thirdcolor: "91662a",
+  };
+
+  const colors: Record<string, string> = {};
+  for (const [key, fallback] of Object.entries(defaults)) {
+    const raw = urlParams.get(key) ?? "";
+    colors[key] = isValidHex(raw) ? raw : fallback;
+  }
+
+  const root = document.documentElement;
+  root.style.setProperty("--title-color", `#${colors.titlecolor}`);
+  root.style.setProperty("--title-glow", hexToRgba(colors.titlecolor, 0.8));
+  root.style.setProperty("--accent-glow", hexToRgba(colors.titlecolor, 0.3));
+  root.style.setProperty("--bg-color", `#${colors.bgcolor}`);
+  root.style.setProperty("--text-color", `#${colors.textcolor}`);
+  root.style.setProperty("--first-color", `#${colors.firstcolor}`);
+  root.style.setProperty("--first-glow", hexToRgba(colors.firstcolor, 0.8));
+  root.style.setProperty("--second-color", `#${colors.secondcolor}`);
+  root.style.setProperty("--third-color", `#${colors.thirdcolor}`);
+  root.style.setProperty("--third-glow", hexToRgba(colors.thirdcolor, 0.66));
+}
+
 function App() {
   const urlParams = new URLSearchParams(window.location.search);
+
+  applyColorParams(urlParams);
 
   const TWITCH_CHANNEL = urlParams.get("channel");
 

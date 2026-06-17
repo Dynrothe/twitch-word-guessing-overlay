@@ -1,8 +1,21 @@
+:root {
+  --title-color: #9147ff;
+  --title-glow: rgba(145, 71, 255, 0.8);
+  --accent-glow: rgba(145, 71, 255, 0.3);
+  --bg-color: #18181b;
+  --text-color: #ffffff;
+  --first-color: #ffdd57;
+  --first-glow: rgba(255, 221, 87, 0.8);
+  --second-color: #d7d7d7;
+  --third-color: #91662a;
+  --third-glow: rgba(145, 102, 42, 0.66);
+}
+
 html,
 body {
   background-color: transparent;
   font-family: "Arial", sans-serif;
-  color: white;
+  color: var(--text-color);
   text-align: center;
   margin: 0;
   padding: 0;
@@ -27,9 +40,9 @@ body {
 h2 {
   font-size: 5vw;
   font-weight: bold;
-  color: #9147ff;
+  color: var(--title-color);
   text-transform: uppercase;
-  text-shadow: 0px 0px 10px rgba(145, 71, 255, 0.8);
+  text-shadow: 0px 0px 10px var(--title-glow);
   margin-top: 0px;
   text-align: center;
 }
@@ -40,10 +53,10 @@ h3 {
 }
 
 .game-container {
-  background-color: #18181b;
+  background-color: var(--bg-color);
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0px 0px 15px rgba(145, 71, 255, 0.3);
+  box-shadow: 0px 0px 15px var(--accent-glow);
   margin: 15px;
 
   height: 100%;
@@ -56,20 +69,20 @@ h3 {
 
 .winner {
   font-size: clamp(20px, 5vw, 100px);
-  color: #ffdd57;
-  text-shadow: 0px 0px 10px rgba(255, 221, 87, 0.8);
+  color: var(--first-color);
+  text-shadow: 0px 0px 10px var(--first-glow);
 }
 
 .secondplace {
   font-size: clamp(20px, 5vw, 100px);
-  color: #d7d7d7;
-  text-shadow: 0px 0px 10px rgba(255, 221, 87, 0.8);
+  color: var(--second-color);
+  text-shadow: 0px 0px 10px var(--first-glow);
 }
 
 .thirdplace {
   font-size: clamp(20px, 5vw, 100px);
-  color: #91662a;
-  text-shadow: 0px 0px 10px #91662aa8;
+  color: var(--third-color);
+  text-shadow: 0px 0px 10px var(--third-glow);
 }
 
 ol {
